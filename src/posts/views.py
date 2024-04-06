@@ -28,5 +28,25 @@ def load_post_data_view(request, num_posts):
         data.append(item)
     return JsonResponse({'data': data[lower:upper], 'size': size})
 
+def like_unlike_post(request):
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        is_ajax = True
+    else:
+        is_ajax = False
+
+    if is_ajax == True:
+        pk = request.POST.get('pk')
+        obj = Post.objects.get(pk=pk)
+        if request.user in obj.liked.all():
+            liked = False
+            obj.liked.remove(request.user)
+        else:
+            liked = True
+            obj.liked.add(request.user)
+        return JsonResponse({'liked': liked, 'count': obj.like_count})
+            
+
+
+
 def hello_world_view(request):
     return JsonResponse({'text': 'hello world'})
