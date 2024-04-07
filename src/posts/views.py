@@ -3,6 +3,7 @@ from .models import Post, Photo
 from django.http import JsonResponse, HttpResponse
 from .forms import PostForm
 from profiles.models import Profile
+from .utils import action_permission
 
 # Create your views here.
 
@@ -127,7 +128,7 @@ def update_post(request, pk):
     })
 
 
-
+@action_permission
 def delete_post(request, pk):
 
     obj = Post.objects.get(pk=pk)
@@ -140,7 +141,8 @@ def delete_post(request, pk):
     if is_ajax == True:
         obj.delete()
 
-    return JsonResponse({})
+        return JsonResponse({})
+    return JsonResponse({'msg': 'access denied - ajax only'})
 
 
 def image_upload_view(request):
